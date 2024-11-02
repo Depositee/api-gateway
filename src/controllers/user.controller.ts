@@ -10,7 +10,10 @@ export const login = async(req : Request , res : Response) =>{
       const { email, password } : LoginRequest = req.body;
 
       if (!email || !password) {
-          res.status(400).json({ error: "Email and password are required" });
+          res.status(400).json({ 
+            success : false,
+            error: "Email and password are required" 
+          });
           return;
       }
 
@@ -27,7 +30,10 @@ export const login = async(req : Request , res : Response) =>{
 
       } catch (error) {
         console.log(error)
-        res.status(500).json({ error: `login with USER_SERVICE error` });
+        res.status(500).json({ 
+          success : false,
+          error: `login with USER_SERVICE error` 
+        });
       }
 }
 // [TODO] need to handle Cookies
@@ -44,7 +50,10 @@ export const register = async (req: Request, res: Response) => {
     } = req.body;
 
     if (!email || !password || !username || !firstName || !lastName) {
-      res.status(400).json({ error: "Required fields are missing" });
+      res.status(400).json({ 
+        success : false,
+        error: "Required fields are missing" 
+      });
       return;
     }
 
@@ -63,6 +72,28 @@ export const register = async (req: Request, res: Response) => {
       token: response.data
     });
   } catch (error) {
-    res.status(500).json({ error: "Register with USER_SERVICE error" });
+    res.status(500).json({ 
+      success : false,
+      error: "Register with USER_SERVICE error" 
+    });
   }
 };
+
+// [TODO] need to handle Cookies
+export const updateSelfProfile = async(req : Request , res : Response) =>{
+  try { 
+    const response = await axios.put(`${USER_SERVICE_URL}user/update`, {
+      req
+    });
+
+    res.json({
+      success: true,
+      token: response.data
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success : false,
+      error: "Update with USER_SERVICE error" 
+    });
+  }
+}
