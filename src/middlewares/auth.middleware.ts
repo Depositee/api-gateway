@@ -21,8 +21,7 @@ function getAuthTokenFromHeader(cookieHeader?: string): string | undefined {
 export const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
       const token = req.cookies?.auth || getAuthTokenFromHeader(req.headers.cookie);
-      console.log('test',token)
-  
+     
       if (!token) {
         res.status(401).json(
             { 
