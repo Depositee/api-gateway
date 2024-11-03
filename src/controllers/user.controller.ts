@@ -4,7 +4,6 @@ import { LoginRequest } from "../models/user.model";
 
 const USER_SERVICE_URL = 'http://localhost:3773/api/v1/'
 
-// [TODO] need to handle Cookies
 export const login = async(req : Request , res : Response) =>{
     try {
       const { email, password } : LoginRequest = req.body;
@@ -55,7 +54,7 @@ export const login = async(req : Request , res : Response) =>{
         });
       }
 }
-// [TODO] need to handle Cookies
+
 export const register = async (req: Request, res: Response) => {
   try {
     const { 
