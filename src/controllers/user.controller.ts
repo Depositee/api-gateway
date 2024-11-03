@@ -21,15 +21,34 @@ export const login = async(req : Request , res : Response) =>{
             {
                 email,
                 password
-            }
+            },
+            { withCredentials : true }
         );
-        res.json({
+
+      const setCookieHeader = response.headers['set-cookie'];
+      if (setCookieHeader) {
+        const authCookie = setCookieHeader.find(cookieStr => cookieStr.startsWith("auth="));
+        
+        if (authCookie) {
+
+          const [cookieNameValue, ...cookieOptions] = authCookie.split("; ");
+          const [cookieName, cookieValue] = cookieNameValue.split("=");
+          res.cookie(cookieName, cookieValue, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 604800000, 
+            path: "/auth", 
+            sameSite: "lax"  
+          });
+        }
+      }
+      
+      res.json({
           success : true,
           token : response.data 
-        });
+      });
 
       } catch (error) {
-        console.log(error)
         res.status(500).json({ 
           success : false,
           error: `login with USER_SERVICE error` 
