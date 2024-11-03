@@ -60,3 +60,45 @@ export const createOrder = async(req : RequestWithUser , res : Response) =>{
     });
   }
 }
+
+export const updateOrder = async(req : RequestWithUser , res : Response) =>{
+  try{
+    const { 
+      depositorId,
+      package_id,
+      status
+    }  = req.body;
+
+    const orderId = req.params.orderId
+
+     const user = req.user
+
+      if (!depositorId || !package_id || !status || !user) {
+          res.status(400).json({ 
+            success : false,
+            error: "Package detailed are required" 
+          });
+          return;
+      }
+
+      const response = await axios.put(`${DEPOSITING_MANAGEMENT_SERVICE_URL}/${orderId}` ,
+            {
+                depositorId: depositorId,
+                depositeeId : user.id,
+                package_id: package_id,
+                status : status
+            }
+      );
+
+      res.status(201).json({
+        success : true,
+        data : response.data 
+      });
+
+  }catch (error) {
+    res.status(500).json({ 
+      success : false,
+      error: `update Order failed` 
+    });
+  }
+}
