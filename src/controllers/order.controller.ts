@@ -102,3 +102,21 @@ export const updateOrder = async(req : RequestWithUser , res : Response) =>{
     });
   }
 }
+
+export const deleteOrder = async(req : Request , res : Response) =>{
+  try{
+    const orderId = req.params.orderId
+    const response = await axios.delete(`${DEPOSITING_MANAGEMENT_SERVICE_URL}/${orderId}`);
+
+      res.status(201).json({
+        success : true,
+        data : response.data 
+      });
+
+  }catch (error) {
+    res.status(500).json({ 
+      success : false,
+      error: `delete Order failed` 
+    });
+  }
+}
