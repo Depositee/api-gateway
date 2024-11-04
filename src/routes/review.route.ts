@@ -1,9 +1,16 @@
-import { Router } from "express";
-import { getReviewByDepositeeId } from "../controllers/review.controller";
+import {Router} from 'express';
+import {
+   getReviewByDepositeeId,
+   createReview,
+   updateReview,
+   deleteReview
+} from '../controllers/review.controller';
 
-const router = Router()
+const router = Router();
 
+router.get('/depositee/:depositeeId', getReviewByDepositeeId);
+router.post('/', createReview);
+router.put('/:id', updateReview);
+router.delete('/:id', deleteReview);
 
-router.get('/reviews/depositee/:depositeeId',getReviewByDepositeeId)
-
-export default router
+export default router;
