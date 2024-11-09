@@ -27,6 +27,8 @@ export const createOrder = async(req : RequestWithUser , res : Response) =>{
       package_name,
       package_description,
       package_weight,
+      payment_type,
+      payment_amount
      }  = req.body;
 
      const user = req.user
@@ -44,7 +46,9 @@ export const createOrder = async(req : RequestWithUser , res : Response) =>{
                 depositorId: user.id,
                 package_name: package_name,
                 package_description: package_description,
-                package_weight: package_weight
+                package_weight: package_weight,
+                payment_type : payment_type,
+                payment_amount : payment_amount
             }
       );
 
