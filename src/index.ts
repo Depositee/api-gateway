@@ -7,9 +7,10 @@ import { authMiddleware } from './middlewares/auth.middleware';
 
 const app = express();
 const PORT = 8081;
+const FRONTEND_URL = 'http://localhost:3000'
 
 app.use(cors({
-  origin: '*', // Replace with your allowed origin(s)
+  origin: FRONTEND_URL, 
   methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH'],
   credentials: true,
 }));
