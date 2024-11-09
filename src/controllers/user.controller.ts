@@ -103,6 +103,16 @@ export const getUserProfile = async(req : Request , res : Response) =>{
   
     const token = req.cookies?.auth || getAuthTokenFromHeader(req.headers.cookie);
 
+    if (!token) {
+      res.status(401).json(
+          { 
+            success : false , 
+            error: "No token provided" 
+          }
+      );
+      return;
+    }
+
     const response = await axios.post(`${USER_SERVICE_URL}verify-token` ,
           {},
           {
@@ -120,7 +130,7 @@ export const getUserProfile = async(req : Request , res : Response) =>{
     } catch (error) {
       res.status(500).json({ 
         success : false,
-        error: `login with USER_SERVICE error` 
+        error: `get User Profile with USER_SERVICE error` 
       });
     }
 }
