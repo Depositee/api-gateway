@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import axios from "axios";
 import { RequestWithUser } from "../models/user.model";
 
-const DEPOSITING_MANAGEMENT_SERVICE_URL = 'http://localhost:3000/orders'
+const DEPOSITING_MANAGEMENT_SERVICE_URL = 'http://localhost:2999/orders'
 
 export const getOrders = async(req : Request , res : Response) =>{
     try {
@@ -62,6 +62,23 @@ export const createOrder = async(req : RequestWithUser , res : Response) =>{
       success : false,
       error: `create Order failed` 
     });
+  }
+}
+export const getOrdersByDepositorId = async(req : RequestWithUser , res : Response) =>{
+  try {
+      const user = req.user
+      const response = await axios.get(`${DEPOSITING_MANAGEMENT_SERVICE_URL}/my/${user?.id}`)
+ 
+      res.status(200).json({
+          success : true,
+          data : response.data 
+      });
+
+  } catch (error) {
+        res.status(500).json({ 
+          success : false,
+          error: `get Orders By depositorId failed` 
+        });
   }
 }
 
