@@ -5,7 +5,7 @@ import { RequestWithUser } from "../models/user.model";
 
 const USER_SERVICE_VERIFY_URL = 'http://localhost:3773/api/v1/verify-token';
 
-function getAuthTokenFromHeader(cookieHeader?: string): string | undefined {
+export function getAuthTokenFromHeader(cookieHeader?: string): string | undefined {
   if (!cookieHeader) return undefined;
 
   const cookies = cookieHeader.split(';');

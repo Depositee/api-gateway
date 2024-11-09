@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import axios from "axios";
 import { LoginRequest } from "../models/user.model";
+import { getAuthTokenFromHeader } from "../middlewares/auth.middleware";
 
 const USER_SERVICE_URL = 'http://localhost:3773/api/v1/'
 
@@ -96,6 +97,33 @@ export const register = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getUserProfile = async(req : Request , res : Response) =>{
+  try {
+  
+    const token = req.cookies?.auth || getAuthTokenFromHeader(req.headers.cookie);
+
+    const response = await axios.post(`${USER_SERVICE_URL}verify-token` ,
+          {},
+          {
+            withCredentials: true,
+            headers: {
+              Cookie: `auth=${token}`,
+            },
+          }
+      );
+    res.json({
+        success : true,
+        data : response.data 
+    });
+
+    } catch (error) {
+      res.status(500).json({ 
+        success : false,
+        error: `login with USER_SERVICE error` 
+      });
+    }
+}
 
 // [TODO] need to handle Cookies
 export const updateSelfProfile = async(req : Request , res : Response) =>{
