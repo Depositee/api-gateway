@@ -63,6 +63,24 @@ export const getOrdersByDepositorId = async(req : RequestWithUser , res : Respon
   }
 }
 
+export const getOrdersByDepositeeId = async(req : RequestWithUser , res : Response) =>{
+  try {
+      const user = req.user
+      const response = await axios.get(`${DEPOSITING_MANAGEMENT_SERVICE_FULL_URL}/accept/${user?.id}`)
+ 
+      res.status(200).json({
+          success : true,
+          data : response.data 
+      });
+
+  } catch (error) {
+        res.status(500).json({ 
+          success : false,
+          error: `get Orders By depositeeId failed` 
+        });
+  }
+}
+
 export const createOrder = async (req: RequestWithUser, res: Response) => {
   try {
     const {
