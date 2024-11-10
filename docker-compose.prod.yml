@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - FRONTEND_URL=${FRONTEND_URL}
+      - FRONTEND_PORT=${FRONTEND_PORT}
+      - DEPOSITING_MANAGEMENT_SERVICE_URL=${DEPOSITING_MANAGEMENT_SERVICE_URL}
+      - DEPOSITING_MANAGEMENT_SERVICE_PORT=${DEPOSITING_MANAGEMENT_SERVICE_PORT}
+      - PAYMENT_SERVICE_URL=${PAYMENT_SERVICE_URL}
+      - PAYMENT_SERVICE_PORT=${PAYMENT_SERVICE_PORT}
+      - REVIEW_SERVICE_URL=${REVIEW_SERVICE_URL}
+      - REVIEW_SERVICE_PORT=${REVIEW_SERVICE_PORT}
+      - USER_SERVICE_URL=${USER_SERVICE_URL}
+      - USER_SERVICE_PORT=${USER_SERVICE_PORT}
+      - PORT=${PORT}
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true

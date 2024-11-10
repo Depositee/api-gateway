@@ -1,8 +1,14 @@
 import { Router } from "express";
-import { getReviewByDepositeeId } from "../controllers/review.controller";
+import {
+  GetAllPaymentByUserId,
+  GetBalanceByUserId,
+  AddBalance,
+} from "../controllers/payment.controller";
 
 const router = Router();
 
-router.post("/", createOrder);
+router.get("/get_payment/:userId", GetAllPaymentByUserId);
+router.get("/get_balance/:userId", GetBalanceByUserId);
+router.post("/add_balance", AddBalance);
 
 export default router;
