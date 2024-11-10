@@ -6,7 +6,7 @@ import {
   DEPOSITING_MANAGEMENT_SERVICE_PORT,
 } from "../config/config";
 
-const DEPOSITING_MANAGEMENT_SERVICE_FULL_URL = `${DEPOSITING_MANAGEMENT_SERVICE_URL}:${DEPOSITING_MANAGEMENT_SERVICE_PORT}`;
+const DEPOSITING_MANAGEMENT_SERVICE_FULL_URL = `${DEPOSITING_MANAGEMENT_SERVICE_URL}:${DEPOSITING_MANAGEMENT_SERVICE_PORT}/orders`;
 
 export const getOrders = async (req: Request, res: Response) => {
   try {
@@ -19,12 +19,49 @@ export const getOrders = async (req: Request, res: Response) => {
       data: response.data,
     });
   } catch (error) {
+    console.log(error)
     res.status(500).json({
       success: false,
       error: `get Orders failed`,
     });
   }
 };
+
+export const getOrdersById = async(req : Request , res : Response) =>{
+  const orderId = req.params.orderId
+  try {
+      const response = await axios.get(`${DEPOSITING_MANAGEMENT_SERVICE_FULL_URL}/${orderId}`)
+      res.status(200).json({
+          success : true,
+          data : response.data
+      });
+
+  } catch (error) {
+    console.log(error)
+        res.status(500).json({ 
+          success : false,
+          error: `get Order with id ${orderId} failed` 
+        });
+  }
+}
+
+export const getOrdersByDepositorId = async(req : RequestWithUser , res : Response) =>{
+  try {
+      const user = req.user
+      const response = await axios.get(`${DEPOSITING_MANAGEMENT_SERVICE_FULL_URL}/my/${user?.id}`)
+ 
+      res.status(200).json({
+          success : true,
+          data : response.data 
+      });
+
+  } catch (error) {
+        res.status(500).json({ 
+          success : false,
+          error: `get Orders By depositorId failed` 
+        });
+  }
+}
 
 export const createOrder = async (req: RequestWithUser, res: Response) => {
   try {
