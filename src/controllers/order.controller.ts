@@ -106,7 +106,7 @@ export const updateOrder = async (req: RequestWithUser, res: Response) => {
     }
 
     const response = await axios.put(
-      `${DEPOSITING_MANAGEMENT_SERVICE_URL}/${orderId}`,
+      `${DEPOSITING_MANAGEMENT_SERVICE_FULL_URL}/${orderId}`,
       {
         depositorId: depositorId,
         depositeeId: user.id,
