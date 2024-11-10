@@ -18,7 +18,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/auth',userRoutes)
-app.use('/order',authMiddleware,orderRoutes)
+app.use('/order',orderRoutes)
 app.use('/reviews',authMiddleware,reviewRoutes );
 
 app.listen(PORT, () => {

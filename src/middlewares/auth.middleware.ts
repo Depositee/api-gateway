@@ -26,7 +26,7 @@ export const authMiddleware = async (req: RequestWithUser, res: Response, next: 
         res.status(401).json(
             { 
               success : false , 
-              error: "No token provided" 
+              error: "You must login to enable this feature" 
             }
         );
         return;

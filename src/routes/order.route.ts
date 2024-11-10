@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { createOrder, deleteOrder, getOrders, getOrdersByDepositorId, getOrdersById, updateOrder } from "../controllers/order.controller";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router()
 
 router.get('/' ,getOrders)
-router.get('/my/:orderId' ,getOrdersById)
-router.get('/my',getOrdersByDepositorId)
-router.post('/',createOrder)
-router.put('/:orderId', updateOrder)
-router.delete('/:orderId',deleteOrder)
+router.get('/my/:orderId' ,authMiddleware,getOrdersById)
+router.get('/my',authMiddleware,getOrdersByDepositorId)
+router.post('/',authMiddleware,createOrder)
+router.put('/:orderId',authMiddleware, updateOrder)
+router.delete('/:orderId',authMiddleware,deleteOrder)
 
 export default router
