@@ -21,6 +21,41 @@ export const getOrders = async(req : Request , res : Response) =>{
     }
 }
 
+export const getOrdersById = async(req : Request , res : Response) =>{
+  const orderId = req.params.orderId
+  try {
+      const response = await axios.get(`${DEPOSITING_MANAGEMENT_SERVICE_URL}/${orderId}`)
+      res.status(200).json({
+          success : true,
+          data : response.data
+      });
+
+  } catch (error) {
+        res.status(500).json({ 
+          success : false,
+          error: `get Order with id ${orderId} failed` 
+        });
+  }
+}
+
+export const getOrdersByDepositorId = async(req : RequestWithUser , res : Response) =>{
+  try {
+      const user = req.user
+      const response = await axios.get(`${DEPOSITING_MANAGEMENT_SERVICE_URL}/my/${user?.id}`)
+ 
+      res.status(200).json({
+          success : true,
+          data : response.data 
+      });
+
+  } catch (error) {
+        res.status(500).json({ 
+          success : false,
+          error: `get Orders By depositorId failed` 
+        });
+  }
+}
+
 export const createOrder = async(req : RequestWithUser , res : Response) =>{
   try{
     const { 
@@ -64,29 +99,17 @@ export const createOrder = async(req : RequestWithUser , res : Response) =>{
     });
   }
 }
-export const getOrdersByDepositorId = async(req : RequestWithUser , res : Response) =>{
-  try {
-      const user = req.user
-      const response = await axios.get(`${DEPOSITING_MANAGEMENT_SERVICE_URL}/my/${user?.id}`)
- 
-      res.status(200).json({
-          success : true,
-          data : response.data 
-      });
-
-  } catch (error) {
-        res.status(500).json({ 
-          success : false,
-          error: `get Orders By depositorId failed` 
-        });
-  }
-}
 
 export const updateOrder = async(req : RequestWithUser , res : Response) =>{
   try{
     const { 
       depositorId,
       package_id,
+      package_name,
+      package_description,
+      package_weight,
+      payment_type,
+      payment_amount,
       status
     }  = req.body;
 
@@ -94,7 +117,7 @@ export const updateOrder = async(req : RequestWithUser , res : Response) =>{
 
      const user = req.user
 
-      if (!depositorId || !package_id || !status || !user) {
+      if (!depositorId || !package_id || !status || !user || !package_name || !package_description || !package_weight || !payment_type || !payment_amount) {
           res.status(400).json({ 
             success : false,
             error: "Package detailed are required" 
@@ -107,6 +130,11 @@ export const updateOrder = async(req : RequestWithUser , res : Response) =>{
                 depositorId: depositorId,
                 depositeeId : user.id,
                 package_id: package_id,
+                package_name : package_name,
+                package_description : package_description,
+                package_weight : package_weight,
+                payment_type : payment_type,
+                payment_amount : payment_amount,
                 status : status
             }
       );
