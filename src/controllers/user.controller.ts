@@ -153,3 +153,19 @@ export const updateSelfProfile = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie("auth", {
+      path: "/auth",
+    });
+    res.json({
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Logout with USER_SERVICE error",
+    });
+  }
+};
