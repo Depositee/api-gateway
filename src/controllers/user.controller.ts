@@ -95,7 +95,7 @@ export const register = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: "Register with USER_SERVICE error",
+      error: `Register with USER_SERVICE ${error}`,
     });
   }
 };
