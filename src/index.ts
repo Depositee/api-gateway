@@ -6,6 +6,9 @@ import reviewRoutes from "./routes/review.route";
 import userRoutes from "./routes/user.route";
 import { authMiddleware } from "./middlewares/auth.middleware";
 import { FRONTEND_URL, FRONTEND_PORT } from "./config/config";
+import { createServer } from "http";
+import { WebSocket, WebSocketServer } from "ws";
+import { createWebSocketConnection,UserConsumers, UserSockets } from "./messageBrokers/webSocket";
 
 const app = express();
 const PORT = 8081;
@@ -36,6 +39,27 @@ app.use("/order", orderRoutes);
 app.use("/reviews", authMiddleware, reviewRoutes);
 app.use("/payment", authMiddleware, paymentRotes);
 
-app.listen(PORT, () => {
+const server = createServer(app);
+
+const wss = new WebSocketServer({ server });
+const userConsumers: UserConsumers = {}; 
+const userSockets : UserSockets = {};
+
+wss.on("connection", (ws: WebSocket, req) => {
+  const userId = new URL(
+    req.url!,
+    `http://${req.headers.host}`
+  ).searchParams.get("userId");
+
+  if (!userId) {
+    console.error("Missing userId in query parameters.");
+    ws.close();
+    return;
+  }
+  createWebSocketConnection(ws,userId,userSockets,userConsumers);
+});
+
+
+server.listen(PORT, () => {
   console.log(`API Gateway running on port ${PORT}`);
 });
