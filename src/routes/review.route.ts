@@ -5,12 +5,13 @@ import {
    updateReview,
    deleteReview
 } from '../controllers/review.controller';
+import { authMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();
 
 router.get('/depositee/:depositeeId', getReviewByDepositeeId);
-router.post('/', createReview);
-router.put('/:id', updateReview);
-router.delete('/:id', deleteReview);
+router.post('/',authMiddleware, createReview);
+router.put('/:id',authMiddleware, updateReview);
+router.delete('/:id',authMiddleware, deleteReview);
 
 export default router;

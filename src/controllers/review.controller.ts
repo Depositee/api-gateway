@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import axios from "axios";
 import { REVIEW_SERVICE_PORT, REVIEW_SERVICE_URL } from "../config/config";
+import { RequestWithUser } from "../models/user.model";
 
 const REVIEW_SERVICE_FULL_URL = `${REVIEW_SERVICE_URL}:${REVIEW_SERVICE_PORT}/api`;
 
@@ -20,11 +21,12 @@ export const getReviewByDepositeeId = async (req: Request, res: Response) => {
 };
 
 // Create a new review
-export const createReview = async (req: Request, res: Response) => {
+export const createReview = async (req: RequestWithUser, res: Response) => {
   try {
+    const user = req.user
     const response = await axios.post(
       `${REVIEW_SERVICE_FULL_URL}/reviews`,
-      req.body
+      {...req.body, depositorId : user?.id}
     );
     res.status(201).json(response.data);
   } catch (error) {
