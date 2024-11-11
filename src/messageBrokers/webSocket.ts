@@ -1,11 +1,13 @@
 import amqp, { Channel, Connection, ConsumeMessage } from "amqplib";
 import { WebSocket, WebSocketServer } from "ws";
 import { RABBIT_MQ_URL } from "../config/config";
+import { WEBSOCKET_SERVER_PORT as _WEBSOCKET_SERVER_PORT } from "../config/config";
 
 const RABBITMQ_URL = `amqp://${RABBIT_MQ_URL}`;
+const WEBSOCKET_SERVER_PORT = _WEBSOCKET_SERVER_PORT;
 const EXCHANGE = "notification_exchange";
 
-const wss = new WebSocketServer({ port: 8088 });
+const wss = new WebSocketServer({ port: WEBSOCKET_SERVER_PORT });
 
 export interface UserConsumers {
   [userId: string]: { channel: Channel };
@@ -18,7 +20,7 @@ export interface UserSockets {
 export const startRabbitMQConsumer = async (
   userId: string,
   channel: Channel,
-  userSockets : UserSockets
+  userSockets: UserSockets
 ): Promise<void> => {
   try {
     await channel.assertExchange(EXCHANGE, "topic", { durable: true });
@@ -31,10 +33,10 @@ export const startRabbitMQConsumer = async (
 
     console.log(`Waiting for messages for user ${userId}...`);
 
-    channel.consume(queue, async(msg: ConsumeMessage | null) => {
+    channel.consume(queue, async (msg: ConsumeMessage | null) => {
       if (msg) {
         const messageContent = msg.content.toString();
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
         if (
           userSockets[userId] &&
           userSockets[userId].readyState === WebSocket.OPEN
@@ -56,50 +58,57 @@ export const startRabbitMQConsumer = async (
   }
 };
 
-export const stopRabbitMQConsumer = async (userId: string , userConsumers : UserConsumers): Promise<void> => {
+export const stopRabbitMQConsumer = async (
+  userId: string,
+  userConsumers: UserConsumers
+): Promise<void> => {
   const consumer = userConsumers[userId];
   if (consumer) {
     try {
       await consumer.channel.close();
       console.log(`Stopped RabbitMQ consumer for user ${userId}`);
-      delete userConsumers[userId]; 
+      delete userConsumers[userId];
     } catch (error) {
       console.error("Error stopping RabbitMQ Consumer:", error);
     }
   }
 };
 
+export const createWebSocketConnection = (
+  ws: WebSocket,
+  userId: string,
+  userSockets: UserSockets,
+  userConsumers: UserConsumers
+) => {
+  try {
+    console.log(`Client connected with userId: ${userId}`);
+    userSockets[userId] = ws;
 
-export const createWebSocketConnection = (ws: WebSocket , userId : string , userSockets: UserSockets , userConsumers : UserConsumers ) => {
-    try {
-        console.log(`Client connected with userId: ${userId}`);
-        userSockets[userId] = ws;
-    
-        if (userConsumers[userId]) {
-          stopRabbitMQConsumer(userId , userConsumers); 
-        }
-    
-        amqp
-          .connect(RABBITMQ_URL)
-          .then((connection: Connection) => {
-            return connection.createChannel().then((channel: Channel) => {
-              userConsumers[userId] = { channel }; 
-              startRabbitMQConsumer(userId, channel,userSockets); 
-            });
-          })
-          .catch((error) => {
-            console.error("Error connecting to RabbitMQ:", error);
-            ws.close();
-          });
-    
-        ws.on("close", () => {
-          console.log(`Client disconnected for userId: ${userId}`);
-    
-          delete userSockets[userId];
-          stopRabbitMQConsumer(userId,userConsumers);
+    if (userConsumers[userId]) {
+      stopRabbitMQConsumer(userId, userConsumers);
+    }
+
+    amqp
+      .connect(RABBITMQ_URL)
+      .then((connection: Connection) => {
+        return connection.createChannel().then((channel: Channel) => {
+          userConsumers[userId] = { channel };
+          startRabbitMQConsumer(userId, channel, userSockets);
         });
-      } catch (error) {
-        console.error("Authentication failed:", error);
+      })
+      .catch((error) => {
+        console.error("Error connecting to RabbitMQ:", error);
         ws.close();
-      }
-}
+      });
+
+    ws.on("close", () => {
+      console.log(`Client disconnected for userId: ${userId}`);
+
+      delete userSockets[userId];
+      stopRabbitMQConsumer(userId, userConsumers);
+    });
+  } catch (error) {
+    console.error("Authentication failed:", error);
+    ws.close();
+  }
+};
