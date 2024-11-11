@@ -4,7 +4,7 @@ import { RABBIT_MQ_URL } from "../config/config";
 import { WEBSOCKET_SERVER_PORT as _WEBSOCKET_SERVER_PORT } from "../config/config";
 
 const RABBITMQ_URL = `amqp://${RABBIT_MQ_URL}`;
-const WEBSOCKET_SERVER_PORT = _WEBSOCKET_SERVER_PORT;
+const WEBSOCKET_SERVER_PORT = Number(_WEBSOCKET_SERVER_PORT);
 const EXCHANGE = "notification_exchange";
 
 const wss = new WebSocketServer({ port: WEBSOCKET_SERVER_PORT });
