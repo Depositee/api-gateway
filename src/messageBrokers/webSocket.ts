@@ -31,9 +31,10 @@ export const startRabbitMQConsumer = async (
 
     console.log(`Waiting for messages for user ${userId}...`);
 
-    channel.consume(queue, (msg: ConsumeMessage | null) => {
+    channel.consume(queue, async(msg: ConsumeMessage | null) => {
       if (msg) {
         const messageContent = msg.content.toString();
+        await new Promise(resolve => setTimeout(resolve, 200));
         if (
           userSockets[userId] &&
           userSockets[userId].readyState === WebSocket.OPEN
