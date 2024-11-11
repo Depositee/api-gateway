@@ -169,3 +169,27 @@ export const logout = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getUserData = async (req: Request, res: Response) => {
+  try {  
+    const token =
+      req.cookies?.auth || getAuthTokenFromHeader(req.headers.cookie);
+    const id = req.params.userId
+    const response = await axios.get(
+      `${USER_SERVICE_FULL_URL}userid/${id}`,
+      {
+        headers: { Cookie: `auth=${token}` },
+        withCredentials: true,
+      }
+    );
+    res.json({
+      success: true,
+      data: response.data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: `get User Data with USER_SERVICE error`,
+    });
+  }
+};

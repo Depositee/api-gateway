@@ -5,10 +5,12 @@ import {
   register,
   updateSelfProfile,
   logout,
+  getUserData,
 } from "../controllers/user.controller";
 
 const router = Router();
 
+router.get("/info/:userId",getUserData)
 router.post("/login", login);
 router.post("/register", register);
 router.post("/profile", getUserProfile);
